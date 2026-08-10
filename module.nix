@@ -150,16 +150,14 @@ in
     };
     users.groups.sentinelone = { };
 
+    systemd.tmpfiles.rules = [
+      "d ${cfg.dataDir} 0755 sentinelone sentinelone -"
+    ];
+
     systemd.services.sentinelone-init = {
       wantedBy = [ "sentinelone.service" ];
       before = [ "sentinelone.service" ];
-      unitConfig.RequiresMountsFor = [
-        "/opt/sentinelone"
-        "/opt/sentinelone/bin"
-        "/opt/sentinelone/ebpfs"
-        "/opt/sentinelone/lib"
-        "/opt/sentinelone/ranger"
-      ];
+      unitConfig.RequiresMountsFor = [ "/opt/sentinelone" ];
       serviceConfig = {
         Type = "oneshot";
         ExecStart = "${getExe initScript}";
@@ -171,49 +169,46 @@ in
       sentinelctlScript
     ];
 
-    fileSystems = {
-      "/opt/sentinelone" = {
-        device = cfg.dataDir;
-        fsType = "none";
-        options = [ "bind" ];
-      };
-      "/opt/sentinelone/bin" = {
-        device = "${cfg.package}/opt/sentinelone/bin";
-        fsType = "none";
-        depends = [ "/opt/sentinelone" ];
-        options = [
-          "bind"
-          "ro"
-        ];
-      };
-      "/opt/sentinelone/ebpfs" = {
-        device = "${cfg.package}/opt/sentinelone/ebpfs";
-        fsType = "none";
-        depends = [ "/opt/sentinelone" ];
-        options = [
-          "bind"
-          "ro"
-        ];
-      };
-      "/opt/sentinelone/lib" = {
-        device = "${cfg.package}/opt/sentinelone/lib";
-        fsType = "none";
-        depends = [ "/opt/sentinelone" ];
-        options = [
-          "bind"
-          "ro"
-        ];
-      };
-      "/opt/sentinelone/ranger" = {
-        device = "${cfg.package}/opt/sentinelone/ranger";
-        fsType = "none";
-        depends = [ "/opt/sentinelone" ];
-        options = [
-          "bind"
-          "ro"
-        ];
-      };
-    };
+    systemd.mounts = [
+      {
+        what = cfg.dataDir;
+        where = "/opt/sentinelone";
+        type = "none";
+        options = "bind";
+        wantedBy = [ "sentinelone-init.service" ];
+        before = [ "sentinelone-init.service" ];
+      }
+      {
+        what = "${cfg.package}/opt/sentinelone/bin";
+        where = "/opt/sentinelone/bin";
+        type = "none";
+        options = "bind,ro";
+        requires = [ "opt-sentinelone.mount" ];
+        after = [ "opt-sentinelone.mount" ];
+        wantedBy = [ "sentinelone.service" ];
+        before = [ "sentinelone.service" ];
+      }
+      {
+        what = "${cfg.package}/opt/sentinelone/ebpfs";
+        where = "/opt/sentinelone/ebpfs";
+        type = "none";
+        options = "bind,ro";
+        requires = [ "opt-sentinelone.mount" ];
+        after = [ "opt-sentinelone.mount" ];
+        wantedBy = [ "sentinelone.service" ];
+        before = [ "sentinelone.service" ];
+      }
+      {
+        what = "${cfg.package}/opt/sentinelone/ranger";
+        where = "/opt/sentinelone/ranger";
+        type = "none";
+        options = "bind,ro";
+        requires = [ "opt-sentinelone.mount" ];
+        after = [ "opt-sentinelone.mount" ];
+        wantedBy = [ "sentinelone.service" ];
+        before = [ "sentinelone.service" ];
+      }
+    ];
 
     systemd.services.sentinelone = {
       enable = true;
