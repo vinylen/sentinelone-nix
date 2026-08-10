@@ -183,8 +183,14 @@ in
         where = "/opt/sentinelone/bin";
         type = "none";
         options = "bind,ro";
-        requires = [ "opt-sentinelone.mount" ];
-        after = [ "opt-sentinelone.mount" ];
+        requires = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
+        after = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
         wantedBy = [ "sentinelone.service" ];
         before = [ "sentinelone.service" ];
       }
@@ -193,8 +199,14 @@ in
         where = "/opt/sentinelone/ebpfs";
         type = "none";
         options = "bind,ro";
-        requires = [ "opt-sentinelone.mount" ];
-        after = [ "opt-sentinelone.mount" ];
+        requires = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
+        after = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
         wantedBy = [ "sentinelone.service" ];
         before = [ "sentinelone.service" ];
       }
@@ -203,8 +215,14 @@ in
         where = "/opt/sentinelone/ranger";
         type = "none";
         options = "bind,ro";
-        requires = [ "opt-sentinelone.mount" ];
-        after = [ "opt-sentinelone.mount" ];
+        requires = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
+        after = [
+          "opt-sentinelone.mount"
+          "sentinelone-init.service"
+        ];
         wantedBy = [ "sentinelone.service" ];
         before = [ "sentinelone.service" ];
       }
